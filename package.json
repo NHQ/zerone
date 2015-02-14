@@ -1,0 +1,38 @@
+{
+  "name": "jsynth-zerone",
+  "version": "0.02.0",
+  "description": "advanced rayray based god syncopator for audio scripting",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "beatmath": "^0.3.0",
+    "jigger": "^1.0.0",
+    "jmod": "^0.4.0",
+    "jsynth": "",
+    "nvelope": "^0.11.0",
+    "oscillators": "^1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:NHQ/jsynth-zerone.git"
+  },
+  "keywords": [
+    "jsynth",
+    "baudio",
+    "browserify",
+    "timers",
+    "dsp",
+    "webaudio"
+  ],
+  "author": "Johnny Honestly <mostmodernist@gmail.com> (http://johnnyscript.us/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NHQ/jsynth-zerone/issues"
+  },
+  "homepage": "https://github.com/NHQ/jsynth-zerone",
+  "dependencies": {
+    "jsynth-sync": "^0.14.0"
+  }
+}
