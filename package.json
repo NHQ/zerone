@@ -1,6 +1,6 @@
 {
   "name": "jsynth-zerone",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "advanced rayray based god syncopator for audio scripting",
   "main": "index.js",
   "scripts": {
