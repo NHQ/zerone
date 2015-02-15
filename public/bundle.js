@@ -310,9 +310,9 @@ var jigger = require('jigger')
 var generator = new jigger()
 
 var oscillators = require('oscillators');
-var sync = require('./') // jsynth-sync
+var sync = require('./xindex') // jsynth-zerone
 var bpm  = 72
-var  f = 54
+var  f = 499
 var timer = sync(bpm, master.sampleRate)
 
 
@@ -320,7 +320,7 @@ var generators = [];
 var beatmath = require('beatmath')
 var onbeat = beatmath(4, [7, 8])
 unswing = false
-var t0 = timer.on(1/2, [,[,,1,,],[,,,,,,,,,,1],[,,,,1],[,,,,],0,[1,0,0,,,,],], function(ti, b, off, swing){
+var t0 = timer.beat(1/2, [,[,,1,,],[,,,,,,,,,,1],[,,,,1],[,,,,],0,[1,0,0,,,,],], function(ti, b, off, swing){
   console.log('major beat is %d', b)
   if(unswing){
     swing(0)
@@ -356,58 +356,7 @@ dsp.connect(master.destination)
 
 
 
-},{"./":"/home/johnny/projects/zerone/index.js","beatmath":"/home/johnny/projects/zerone/node_modules/beatmath/index.js","jigger":"/home/johnny/projects/zerone/node_modules/jigger/index.js","jsynth":"/home/johnny/projects/zerone/node_modules/jsynth/index.js","nvelope":"/home/johnny/projects/zerone/node_modules/nvelope/index.js","oscillators":"/home/johnny/projects/zerone/node_modules/oscillators/oscillators.js"}],"/home/johnny/projects/zerone/index.js":[function(require,module,exports){
-var sync = require('jsynth-sync')
-
-module.exports = function(bpm, sampleRate){
-  var Timer = sync(bpm, sampleRate)
-  var swag = 0
-  var swinger = function(x){swag = x}
-  var master = undefined
-  var stoppers = []
-  Timer._on = Timer.on
-  Timer.on = eys
-  
-  return Timer 
-  
-  function eys (interval, rayray, fn){
-    var y = rayray.length
-    
-    if(!master) master = {rayray: rayray, beat: 0}
-
-    var timer = Timer._on(interval, function(time, beat, xxx, swing){
-      if(rayray === master.rayray){
-        master.beat = beat
-        //console.log('master beat %d', beat)
-      }
-      else{
-        //console.log('submaster beat %d', beat, rayray)
-      }
-      swing(swag)
-      var i = rayray[(beat-1)%y]
-      if(i){
-        if(Array.isArray(i)){
-          var yn = i.length
-          var intervaln = interval / yn
-          var bat = eys(intervaln, i, fn)// interval is bug?
-          bat._l = i.length
-          bat.on('beat', function(b){
-            if(b == bat._l) bat.emit('stop') 
-          })
-        }
-        else{
-          fn(time, master.beat, xxx, swinger)
-        }
-      }
-      else{
-        return
-      }
-    })
-    return timer
-  }
-}
-
-},{"jsynth-sync":"/home/johnny/projects/zerone/node_modules/jsynth-sync/index.js"}],"/home/johnny/projects/zerone/node_modules/beatmath/index.js":[function(require,module,exports){
+},{"./xindex":"/home/johnny/projects/zerone/xindex.js","beatmath":"/home/johnny/projects/zerone/node_modules/beatmath/index.js","jigger":"/home/johnny/projects/zerone/node_modules/jigger/index.js","jsynth":"/home/johnny/projects/zerone/node_modules/jsynth/index.js","nvelope":"/home/johnny/projects/zerone/node_modules/nvelope/index.js","oscillators":"/home/johnny/projects/zerone/node_modules/oscillators/oscillators.js"}],"/home/johnny/projects/zerone/node_modules/beatmath/index.js":[function(require,module,exports){
 module.exports = function(m, btz){
   return function(beat){
     var x = beat % m
@@ -799,4 +748,57 @@ function square(t, f){
 
 };
 
-},{}]},{},["/home/johnny/projects/zerone/example.js"]);
+},{}],"/home/johnny/projects/zerone/xindex.js":[function(require,module,exports){
+var sync = require('jsynth-sync')
+
+module.exports = function(bpm, sampleRate){
+  var Timer = sync(bpm, sampleRate)
+  Timer.beat = beat
+  return Timer
+  
+  function beat (interval, rayray, fn){
+    var swag = 0
+    var swinger = function(x){swag = x}
+    var master = undefined
+
+    return eys(interval, rayray, fn)
+
+    function eys (interval, rayray, fn){
+      var y = rayray.length
+      
+      if(!master) master = {rayray: rayray, beat: 0}
+
+      var timer = Timer.on(interval, function(time, beat, xxx, swing){
+        if(rayray === master.rayray){
+          master.beat = beat
+          //console.log('master beat %d', beat)
+        }
+        else{
+          //console.log('submaster beat %d', beat, rayray)
+        }
+        swing(swag)
+        var i = rayray[(beat-1)%y]
+        if(i){
+          if(Array.isArray(i)){
+            var yn = i.length
+            var intervaln = interval / yn
+            var bat = eys(intervaln, i, fn)// interval is bug?
+            bat._l = i.length
+            bat.on('beat', function(b){
+              if(b == bat._l) bat.emit('stop') 
+            })
+          }
+          else{
+            fn(time, master.beat, xxx, swinger)
+          }
+        }
+        else{
+          return
+        }
+      })
+      return timer
+    }
+  }
+}
+
+},{"jsynth-sync":"/home/johnny/projects/zerone/node_modules/jsynth-sync/index.js"}]},{},["/home/johnny/projects/zerone/example.js"]);

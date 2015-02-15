@@ -6,9 +6,9 @@ var jigger = require('jigger')
 var generator = new jigger()
 
 var oscillators = require('oscillators');
-var sync = require('./') // jsynth-sync
+var sync = require('./xindex') // jsynth-zerone
 var bpm  = 72
-var  f = 54
+var  f = 499
 var timer = sync(bpm, master.sampleRate)
 
 
@@ -16,7 +16,7 @@ var generators = [];
 var beatmath = require('beatmath')
 var onbeat = beatmath(4, [7, 8])
 unswing = false
-var t0 = timer.on(1/2, [,[,,1,,],[,,,,,,,,,,1],[,,,,1],[,,,,],0,[1,0,0,,,,],], function(ti, b, off, swing){
+var t0 = timer.beat(1/2, [,[,,1,,],[,,,,,,,,,,1],[,,,,1],[,,,,],0,[1,0,0,,,,],], function(ti, b, off, swing){
   console.log('major beat is %d', b)
   if(unswing){
     swing(0)
