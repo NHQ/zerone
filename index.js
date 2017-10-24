@@ -1,4 +1,4 @@
-var sync = require('jsynth-sync')
+var sync = require('../jsynth-sync')
 
 module.exports = function(bpm, sampleRate){
   var Timer = sync(bpm, sampleRate)
@@ -15,11 +15,12 @@ module.exports = function(bpm, sampleRate){
     function eys (interval, rayray, fn){
       var y = rayray.length
       
-      if(!master) master = {rayray: rayray, beat: 0}
 
       var timer = Timer.on(interval, function(time, beat, xxx, swing){
         if(rayray === master.rayray){
           master.beat = beat
+          master.stop = xxx
+          master.ended = false
           //console.log('master beat %d', beat)
         }
         else{
@@ -31,19 +32,29 @@ module.exports = function(bpm, sampleRate){
           if(Array.isArray(i)){
             var yn = i.length
             var intervaln = interval / yn
-            var bat = eys(intervaln, i, fn)// interval is bug?
-            bat._l = i.length
-            bat.on('beat', function(b){
-              if(b == bat._l) bat.emit('stop') 
+             var _timer = eys(intervaln, i, fn)// interval is bug?
+            _timer._l = i.length
+            _timer.on('end', function(){
+              master.timer.emit('stop')
+            })
+            _timer.on('beat', function(b){
+              if(b === _timer._l) _timer.emit('stop') 
             })
           }
           else{
-            fn(time, master.beat, xxx, swinger)
+            fn(time, master.beat, beat, i, xxx, swinger)
           }
         }
         else{
           return
         }
+      })
+      if(!master){
+        master = {rayray: rayray, beat: 0}
+        master.timer = timer
+      }
+      timer.on('end', function(){
+        timer.emit('stop')
       })
       return timer
     }
