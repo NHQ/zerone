@@ -1,4 +1,4 @@
-var sync = require('../jsynth-sync')
+var sync = require('jsynth-sync')
 
 module.exports = function(bpm, sampleRate){
   var Timer = sync(bpm, sampleRate)
